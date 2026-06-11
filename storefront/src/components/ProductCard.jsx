@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { formatPrice } from '../data/products';
-import { vercelImageUrl } from '../lib/vercelImage';
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
@@ -12,8 +11,8 @@ export default function ProductCard({ product }) {
       <div className="product-card-img">
         {img1 ? (
           <>
-            <img className="img-1" src={vercelImageUrl(img1, { w: 600 })} alt={product.name} loading="lazy" />
-            <img className="img-2" src={vercelImageUrl(img2, { w: 600 })} alt={product.name + ' alt'} loading="lazy" />
+            <img className="img-1" src={img1} alt={product.name} loading="lazy" />
+            <img className="img-2" src={img2} alt={product.name + ' alt'} loading="lazy" />
           </>
         ) : (
           <>

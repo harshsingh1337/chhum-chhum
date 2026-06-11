@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { vercelImageUrl } from '../lib/vercelImage';
 
 export default function CollectionCard({ collection }) {
   const navigate = useNavigate();
@@ -7,7 +6,7 @@ export default function CollectionCard({ collection }) {
   return (
     <div className="collection-card fade-up" onClick={() => navigate('/collections')}>
       {collection.image ? (
-        <img className="collection-card-bg" src={vercelImageUrl(collection.image, { w: 900 })} alt={collection.name} loading="lazy" style={{ objectFit: 'cover' }} />
+        <img className="collection-card-bg" src={collection.image} alt={collection.name} loading="lazy" style={{ objectFit: 'cover' }} />
       ) : (
         <div className={`collection-card-bg ${collection.colorClass || 'saree-a'}`}></div>
       )}

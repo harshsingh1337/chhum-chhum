@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { vercelImageUrl } from '../lib/vercelImage';
 
 const slides = [
   {
@@ -30,8 +29,8 @@ export default function HeroSlider() {
         <div
           key={i}
           className={`hero-slide ${i === current ? 'active' : ''}`}
-            style={{
-            backgroundImage: `url("${vercelImageUrl(slide.image, { w: 1200 })}")`,
+          style={{
+            backgroundImage: `url("${slide.image}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
