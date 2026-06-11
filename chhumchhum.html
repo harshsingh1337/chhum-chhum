@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChhumChhum — Fashion Label</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #faf8f4;
+    --off-white: #f5f2ec;
+    --blush: #f2d9d0;
+    --rose: #c97b7b;
+    --deep-rose: #9b4f4f;
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --forest: #1e4a3c;
+    --charcoal: #2a2a2a;
+    --mid: #666;
+    --light: #999;
+    --border: #e8e2d9;
+    --shadow: 0 4px 30px rgba(0,0,0,0.07);
+    --shadow-hover: 0 12px 50px rgba(0,0,0,0.13);
+    --r: 2px;
+    --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--charcoal); overflow-x: hidden; }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(250,248,244,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    transition: box-shadow var(--transition);
+  }
+  nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--charcoal); cursor: pointer;
+    display: flex; flex-direction: column; line-height: 1.1;
+  }
+  .nav-logo span { font-size: 0.55rem; font-family: 'Jost', sans-serif; font-weight: 300; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    font-size: 0.78rem; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--charcoal); text-decoration: none;
+    position: relative; padding-bottom: 2px;
+    transition: color var(--transition);
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+    background: var(--gold); transition: width var(--transition);
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-right { display: flex; gap: 1rem; align-items: center; }
+  .nav-icon { cursor: pointer; color: var(--charcoal); transition: color var(--transition); position: relative; }
+  .nav-icon:hover { color: var(--gold); }
+  .cart-badge {
+    position: absolute; top: -6px; right: -6px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--rose); color: white; font-size: 0.6rem;
+    display: flex; align-items: center; justify-content: center; font-weight: 500;
+  }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 22px; height: 1.5px; background: var(--charcoal); transition: var(--transition); }
+
+  /* ── MOBILE MENU ── */
+  .mobile-menu {
+    display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0; z-index: 999;
+    background: var(--cream); padding: 2rem;
+    flex-direction: column; gap: 1.5rem;
+    transform: translateX(-100%); transition: transform var(--transition);
+  }
+  .mobile-menu.open { transform: translateX(0); }
+  .mobile-menu a {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 400;
+    color: var(--charcoal); text-decoration: none; border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+  }
+
+  /* ── PAGE SYSTEM ── */
+  .page { display: none; min-height: 100vh; padding-top: 64px; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    height: calc(100vh - 64px); position: relative; overflow: hidden;
+    background: var(--off-white);
+  }
+  .hero-slide {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 1s ease;
+  }
+  .hero-slide.active { opacity: 1; }
+  .hero-bg {
+    width: 100%; height: 100%; object-fit: cover;
+    background: linear-gradient(135deg, #f2d9d0 0%, #e8d5b0 40%, #d4e8df 100%);
+  }
+  .hero-slide-1 .hero-bg { background: linear-gradient(135deg, #fce4e4 0%, #f2d9d0 50%, #f9f0e8 100%); }
+  .hero-slide-2 .hero-bg { background: linear-gradient(135deg, #e8f4f0 0%, #d4e8df 50%, #e8d5b0 100%); }
+  .hero-slide-3 .hero-bg { background: linear-gradient(135deg, #f9f0e8 0%, #e8d5b0 50%, #fce4e4 100%); }
+  .hero-mannequin {
+    position: absolute; right: 15%; bottom: 0; height: 85%;
+    display: flex; align-items: flex-end;
+  }
+  .hero-mannequin svg { height: 100%; width: auto; opacity: 0.15; }
+  .hero-content {
+    position: absolute; left: 8%; top: 50%; transform: translateY(-50%);
+    max-width: 520px;
+  }
+  .hero-tag {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem; font-weight: 400;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 300; line-height: 1.05; color: var(--charcoal);
+    margin-bottom: 1.5rem;
+  }
+  .hero-title em { font-style: italic; color: var(--rose); }
+  .hero-subtitle {
+    font-size: 0.85rem; font-weight: 300; color: var(--mid);
+    letter-spacing: 0.05em; line-height: 1.8; margin-bottom: 2rem;
+    max-width: 340px;
+  }
+  .hero-dots {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px;
+  }
+  .hero-dot {
+    width: 24px; height: 2px; background: var(--border); border-radius: 2px;
+    transition: background var(--transition), width var(--transition); cursor: pointer;
+  }
+  .hero-dot.active { background: var(--gold); width: 40px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.75rem 2rem; border: 1.5px solid var(--charcoal);
+    background: transparent; color: var(--charcoal);
+    font-family: 'Jost', sans-serif; font-size: 0.75rem;
+    letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer;
+    text-decoration: none; border-radius: var(--r);
+    transition: all var(--transition);
+  }
+  .btn:hover { background: var(--charcoal); color: var(--cream); }
+  .btn-gold { border-color: var(--gold); color: var(--gold); }
+  .btn-gold:hover { background: var(--gold); color: white; border-color: var(--gold); }
+  .btn-fill { background: var(--charcoal); color: var(--cream); }
+  .btn-fill:hover { background: var(--forest); border-color: var(--forest); }
+  .btn-rose { border-color: var(--rose); color: var(--rose); }
+  .btn-rose:hover { background: var(--rose); color: white; }
+
+  /* ── SECTIONS ── */
+  section { padding: 5rem 4rem; }
+  @media (max-width: 768px) { section { padding: 3rem 1.2rem; } }
+
+  .section-label {
+    font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400; color: var(--charcoal); line-height: 1.15;
+  }
+  .section-title em { font-style: italic; }
+  .section-header { margin-bottom: 3rem; }
+  .section-header-row {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 3rem; gap: 1rem; flex-wrap: wrap;
+  }
+
+  /* ── PRODUCT GRID ── */
+  .product-grid { display: grid; gap: 1.5rem; }
+  .product-grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .product-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .product-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 1100px) { .product-grid-4 { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 800px) { .product-grid-4, .product-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { .product-grid-4, .product-grid-3, .product-grid-2 { grid-template-columns: repeat(1, 1fr); } }
+
+  /* ── PRODUCT CARD ── */
+  .product-card { cursor: pointer; }
+  .product-card-img {
+    position: relative; overflow: hidden; border-radius: var(--r);
+    aspect-ratio: 3/4; background: var(--off-white);
+  }
+  .product-card-img img, .product-card-img .img-placeholder {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    transition: opacity var(--transition), transform 0.6s ease;
+  }
+  .product-card-img .img-placeholder { display: flex; align-items: center; justify-content: center; }
+  .product-card-img .img-2 { opacity: 0; }
+  .product-card:hover .img-1 { opacity: 0; }
+  .product-card:hover .img-2 { opacity: 1; }
+  .product-card:hover .img-placeholder { transform: scale(1.04); }
+  .product-card-tag {
+    position: absolute; top: 1rem; left: 1rem;
+    background: var(--forest); color: white;
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 0.3rem 0.7rem; border-radius: 20px;
+  }
+  .product-card-wishlist {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: white; display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity var(--transition); cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .product-card:hover .product-card-wishlist { opacity: 1; }
+  .product-card-info { padding: 1rem 0 0; }
+  .product-card-name { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 500; color: var(--charcoal); margin-bottom: 0.3rem; }
+  .product-card-sub { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light); margin-bottom: 0.4rem; }
+  .product-card-price { font-size: 0.9rem; font-weight: 400; color: var(--charcoal); }
+
+  /* ── PLACEHOLDER SAREE COLORS ── */
+  .saree-a { background: linear-gradient(160deg, #fce4e4, #f2c9c9, #e8b4b4); }
+  .saree-b { background: linear-gradient(160deg, #e8f4f0, #c9e8df, #a8d4c8); }
+  .saree-c { background: linear-gradient(160deg, #fce8d4, #e8d4b4, #d4b898); }
+  .saree-d { background: linear-gradient(160deg, #e8e4f4, #d4c9e8, #b8a8d4); }
+  .saree-e { background: linear-gradient(160deg, #f4fce4, #dce8c4, #c4d4a4); }
+  .saree-f { background: linear-gradient(160deg, #fce4f4, #e8c4d8, #d4a8c4); }
+  .saree-g { background: linear-gradient(160deg, #fff8e4, #f4e8c4, #e8d4a4); }
+  .saree-h { background: linear-gradient(160deg, #e4f0fc, #c4d8e8, #a4c4d8); }
+
+  .saree-icon {
+    width: 60px; opacity: 0.3;
+  }
+
+  /* ── FEATURED COLLECTIONS ── */
+  .collections-scroll {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    overflow-x: auto; padding-bottom: 0.5rem;
+  }
+  @media (max-width: 800px) { .collections-scroll { grid-template-columns: repeat(2, 1fr); } }
+  .collection-card {
+    border-radius: var(--r); overflow: hidden; position: relative;
+    aspect-ratio: 2/3; cursor: pointer;
+  }
+  .collection-card-bg {
+    width: 100%; height: 100%;
+    transition: transform 0.6s ease;
+  }
+  .collection-card:hover .collection-card-bg { transform: scale(1.05); }
+  .collection-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 1.5rem;
+  }
+  .collection-card-name {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500;
+    color: white; margin-bottom: 0.3rem;
+  }
+  .collection-card-count { font-size: 0.7rem; color: rgba(255,255,255,0.7); letter-spacing: 0.1em; }
+
+  /* ── STORE SECTION ── */
+  .store-section {
+    position: relative; min-height: 400px;
+    background: linear-gradient(135deg, #2a2a2a, #1e4a3c);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .store-bg-pattern {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image: repeating-linear-gradient(45deg, white 0px, white 1px, transparent 0px, transparent 50%);
+    background-size: 30px 30px;
+  }
+  .store-content {
+    position: relative; z-index: 1; text-align: center;
+    padding: 3rem;
+  }
+  .store-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .store-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300; color: white; margin-bottom: 0.5rem; }
+  .store-card {
+    background: white; border-radius: 4px; padding: 2rem 3rem;
+    display: inline-block; margin-top: 2rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .store-address { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); margin-bottom: 1.2rem; }
+
+  /* ── DIVIDERS ── */
+  .divider { width: 60px; height: 1px; background: var(--gold); margin: 1.5rem 0; }
+  .divider-center { margin-left: auto; margin-right: auto; }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap { overflow: hidden; padding: 1.2rem 0; background: var(--forest); }
+  .marquee-track {
+    display: flex; gap: 3rem; white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  .marquee-track span {
+    font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic;
+    font-weight: 300; color: var(--gold-light); letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── COLLECTION PAGE ── */
+  .collection-page-layout { display: flex; gap: 2rem; align-items: flex-start; }
+  .collection-sidebar {
+    width: 240px; flex-shrink: 0; position: sticky; top: 80px;
+  }
+  @media (max-width: 900px) { .collection-sidebar { display: none; } }
+  .filter-group { margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+  .filter-group:last-child { border-bottom: none; }
+  .filter-title {
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--charcoal); margin-bottom: 1rem; font-weight: 500;
+  }
+  .filter-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .filter-option {
+    display: flex; align-items: center; gap: 0.6rem; cursor: pointer;
+    font-size: 0.83rem; color: var(--mid);
+    transition: color var(--transition);
+  }
+  .filter-option:hover { color: var(--charcoal); }
+  .filter-option input { accent-color: var(--gold); width: 14px; height: 14px; }
+  .filter-colors { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .color-dot {
+    width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition);
+    border: 2px solid transparent;
+  }
+  .color-dot:hover, .color-dot.active { transform: scale(1.2); border-color: var(--charcoal); }
+  .price-range { margin-top: 0.5rem; }
+  .price-range input[type=range] {
+    width: 100%; accent-color: var(--gold); margin: 0.5rem 0;
+  }
+  .price-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--mid); }
+
+  /* ── PRODUCT PAGE ── */
+  .product-layout { display: grid; grid-template-columns: 1fr 420px; gap: 4rem; padding: 3rem 4rem; }
+  @media (max-width: 1000px) { .product-layout { grid-template-columns: 1fr; padding: 2rem 1.2rem; } }
+  .product-gallery { display: flex; gap: 1rem; }
+  .gallery-thumbs { display: flex; flex-direction: column; gap: 0.75rem; width: 80px; flex-shrink: 0; }
+  .gallery-thumb {
+    aspect-ratio: 1; border-radius: var(--r); cursor: pointer;
+    border: 1.5px solid transparent; transition: border-color var(--transition); overflow: hidden;
+  }
+  .gallery-thumb.active { border-color: var(--gold); }
+  .gallery-thumb-inner { width: 100%; height: 100%; }
+  .gallery-main { flex: 1; aspect-ratio: 3/4; border-radius: var(--r); overflow: hidden; }
+  .gallery-main-inner { width: 100%; height: 100%; transition: transform 0.6s ease; }
+  .gallery-main:hover .gallery-main-inner { transform: scale(1.03); }
+  @media (max-width: 600px) { .product-gallery { flex-direction: column-reverse; } .gallery-thumbs { flex-direction: row; width: 100%; } .gallery-thumb { width: 64px; height: 64px; } }
+
+  .product-info { padding-top: 1rem; }
+  .product-brand { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+  .product-title { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 400; line-height: 1.1; margin-bottom: 1rem; }
+  .product-price { font-size: 1.5rem; font-weight: 300; color: var(--charcoal); margin-bottom: 2rem; }
+  .product-price .currency { font-size: 1rem; color: var(--mid); }
+
+  .size-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.75rem; }
+  .size-options { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.75rem; }
+  .size-btn {
+    padding: 0.5rem 1rem; border: 1px solid var(--border); background: white;
+    font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.05em;
+    cursor: pointer; border-radius: var(--r); transition: all var(--transition);
+    color: var(--charcoal);
+  }
+  .size-btn:hover { border-color: var(--charcoal); }
+  .size-btn.active { background: var(--charcoal); color: white; border-color: var(--charcoal); }
+
+  .qty-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .qty-control {
+    display: flex; align-items: center; gap: 0; border: 1px solid var(--border);
+    border-radius: var(--r); overflow: hidden;
+  }
+  .qty-btn {
+    width: 40px; height: 40px; background: none; border: none;
+    cursor: pointer; font-size: 1.2rem; color: var(--charcoal);
+    transition: background var(--transition);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qty-btn:hover { background: var(--off-white); }
+  .qty-val {
+    width: 48px; text-align: center; font-size: 0.9rem;
+    border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+    height: 40px; display: flex; align-items: center; justify-content: center;
+  }
+
+  .add-to-cart {
+    width: 100%; padding: 1rem; background: var(--charcoal); color: white;
+    border: none; font-family: 'Jost', sans-serif; font-size: 0.78rem;
+    letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+    border-radius: var(--r); transition: all var(--transition); margin-bottom: 1rem;
+  }
+  .add-to-cart:hover { background: var(--forest); }
+
+  .product-details { margin-top: 2rem; border-top: 1px solid var(--border); }
+  .detail-row {
+    border-bottom: 1px solid var(--border); padding: 1rem 0; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .detail-row-title { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--charcoal); }
+  .detail-content { font-size: 0.85rem; color: var(--mid); line-height: 1.8; padding: 0.75rem 0 0; display: none; }
+  .detail-content.open { display: block; }
+
+  /* ── CART PAGE ── */
+  .cart-layout { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+  .cart-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+  .cart-table th {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--light); border-bottom: 1px solid var(--border); padding: 0.75rem 0;
+    text-align: left; font-weight: 400;
+  }
+  .cart-table th:last-child { text-align: right; }
+  .cart-item-td { padding: 1.5rem 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .cart-item-row { display: flex; gap: 1.2rem; align-items: flex-start; }
+  .cart-item-img { width: 80px; height: 100px; border-radius: var(--r); overflow: hidden; flex-shrink: 0; }
+  .cart-item-img-inner { width: 100%; height: 100%; }
+  .cart-item-name { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .cart-item-meta { font-size: 0.75rem; color: var(--mid); }
+  .cart-item-remove { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light); cursor: pointer; margin-top: 0.5rem; text-decoration: underline; }
+  .cart-notes textarea {
+    width: 100%; border: 1px solid var(--border); padding: 1rem;
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; resize: vertical;
+    min-height: 100px; border-radius: var(--r); outline: none;
+    transition: border-color var(--transition);
+  }
+  .cart-notes textarea:focus { border-color: var(--gold); }
+  .cart-bottom { display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start; }
+  @media (max-width: 700px) { .cart-bottom { grid-template-columns: 1fr; } }
+  .cart-summary-box { background: var(--off-white); padding: 2rem; border-radius: var(--r); }
+  .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--mid); }
+  .cart-total-row.final { font-size: 1rem; font-weight: 500; color: var(--charcoal); border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem; }
+  .terms-check { display: flex; align-items: center; gap: 0.6rem; font-size: 0.78rem; color: var(--mid); cursor: pointer; margin-bottom: 1.5rem; }
+  .terms-check input { accent-color: var(--gold); }
+  .terms-check a { color: var(--charcoal); }
+
+  /* ── CHECKOUT PAGE ── */
+  .checkout-layout { display: grid; grid-template-columns: 1fr 380px; min-height: calc(100vh - 64px); }
+  @media (max-width: 900px) { .checkout-layout { grid-template-columns: 1fr; } }
+  .checkout-left { padding: 3rem 3rem 3rem 4rem; }
+  .checkout-right { background: var(--off-white); padding: 3rem 2rem; border-left: 1px solid var(--border); }
+  @media (max-width: 900px) { .checkout-left { padding: 2rem 1.2rem; } .checkout-right { padding: 2rem 1.2rem; } }
+  .checkout-section-title {
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--charcoal); margin-bottom: 1rem; padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border); font-weight: 500;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 600px) { .form-row, .form-row.triple { grid-template-columns: 1fr; } }
+  .form-input {
+    padding: 0.9rem 1rem; border: 1px solid var(--border); background: white;
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; border-radius: var(--r);
+    outline: none; width: 100%; transition: border-color var(--transition);
+    color: var(--charcoal);
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: var(--light); }
+  .form-select {
+    padding: 0.9rem 1rem; border: 1px solid var(--border); background: white;
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; border-radius: var(--r);
+    outline: none; width: 100%; cursor: pointer; color: var(--charcoal);
+    transition: border-color var(--transition);
+  }
+  .form-select:focus { border-color: var(--gold); }
+  .form-check { display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: var(--mid); margin: 0.5rem 0 1.5rem; cursor: pointer; }
+  .form-check input { accent-color: var(--gold); }
+  .checkout-section { margin-bottom: 2.5rem; }
+  .payment-option {
+    border: 1.5px solid var(--border); border-radius: var(--r); padding: 1.2rem 1.5rem;
+    cursor: pointer; transition: border-color var(--transition);
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .payment-option.active { border-color: var(--gold); background: rgba(201,169,110,0.03); }
+  .payment-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); position: relative; flex-shrink: 0; }
+  .payment-option.active .payment-radio { border-color: var(--gold); }
+  .payment-option.active .payment-radio::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--gold); }
+  .payment-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-left: auto; }
+  .payment-pill { padding: 0.2rem 0.6rem; border: 1px solid var(--border); border-radius: 3px; font-size: 0.6rem; letter-spacing: 0.05em; color: var(--mid); }
+  .payment-desc { font-size: 0.75rem; color: var(--mid); margin-top: 0.5rem; padding-left: 2.5rem; }
+  .checkout-item { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.2rem; }
+  .checkout-item-img { width: 56px; height: 70px; border-radius: var(--r); overflow: hidden; flex-shrink: 0; position: relative; }
+  .checkout-item-img-inner { width: 100%; height: 100%; }
+  .checkout-item-badge {
+    position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--charcoal); color: white;
+    font-size: 0.6rem; display: flex; align-items: center; justify-content: center;
+  }
+  .checkout-item-info { flex: 1; }
+  .checkout-item-name { font-size: 0.88rem; color: var(--charcoal); margin-bottom: 0.2rem; font-family: 'Cormorant Garamond', serif; }
+  .checkout-item-meta { font-size: 0.72rem; color: var(--light); }
+  .checkout-item-price { font-size: 0.9rem; font-weight: 400; }
+  .discount-row { display: flex; gap: 0.5rem; margin: 1.5rem 0; }
+  .discount-input {
+    flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--border);
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; border-radius: var(--r);
+    outline: none; transition: border-color var(--transition);
+  }
+  .discount-input:focus { border-color: var(--gold); }
+  .discount-btn { padding: 0.75rem 1.2rem; background: none; border: 1px solid var(--border); cursor: pointer; border-radius: var(--r); font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; transition: all var(--transition); }
+  .discount-btn:hover { background: var(--charcoal); color: white; border-color: var(--charcoal); }
+  .summary-line { display: flex; justify-content: space-between; font-size: 0.83rem; margin-bottom: 0.7rem; color: var(--mid); }
+  .summary-line.total { font-size: 1rem; color: var(--charcoal); font-weight: 500; border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem; }
+  .summary-tax { font-size: 0.7rem; color: var(--light); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--charcoal); color: rgba(255,255,255,0.7);
+    padding: 4rem 4rem 2rem;
+  }
+  @media (max-width: 768px) { footer { padding: 3rem 1.2rem 2rem; } }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; margin-bottom: 3rem; }
+  @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+  .footer-brand-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; color: white; margin-bottom: 0.3rem; }
+  .footer-brand-sub { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .footer-brand-desc { font-size: 0.8rem; line-height: 1.8; max-width: 260px; }
+  .footer-col-title { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: white; margin-bottom: 1.2rem; font-weight: 400; }
+  .footer-link { display: block; font-size: 0.82rem; color: rgba(255,255,255,0.55); text-decoration: none; margin-bottom: 0.6rem; transition: color var(--transition); }
+  .footer-link:hover { color: var(--gold); }
+  .footer-contact-item { font-size: 0.8rem; margin-bottom: 0.7rem; line-height: 1.6; }
+  .footer-contact-label { color: var(--gold); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.2rem; }
+  .subscribe-row { display: flex; margin-top: 1rem; }
+  .subscribe-input {
+    flex: 1; padding: 0.7rem 1rem; background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15); border-right: none;
+    color: white; font-family: 'Jost', sans-serif; font-size: 0.8rem;
+    outline: none; transition: border-color var(--transition);
+  }
+  .subscribe-input:focus { border-color: var(--gold); }
+  .subscribe-input::placeholder { color: rgba(255,255,255,0.3); }
+  .subscribe-btn {
+    padding: 0.7rem 1.2rem; background: var(--gold); border: 1px solid var(--gold);
+    color: white; cursor: pointer; font-size: 0.7rem; letter-spacing: 0.1em;
+    transition: all var(--transition);
+  }
+  .subscribe-btn:hover { background: var(--deep-rose); border-color: var(--deep-rose); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
+  .footer-social { display: flex; gap: 1rem; }
+  .footer-social-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all var(--transition);
+    color: rgba(255,255,255,0.5);
+  }
+  .footer-social-icon:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── PAGE HERO BANNER ── */
+  .page-banner {
+    background: var(--off-white); padding: 4rem 4rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (max-width: 768px) { .page-banner { padding: 2.5rem 1.2rem 2rem; } }
+  .page-banner-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+  .page-banner-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 300; }
+  .page-banner-count { font-size: 0.78rem; color: var(--light); margin-top: 0.5rem; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 2000;
+    background: var(--charcoal); color: white;
+    padding: 1rem 1.5rem; border-radius: var(--r);
+    font-size: 0.85rem; letter-spacing: 0.03em;
+    transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    display: flex; align-items: center; gap: 0.7rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  }
+  .toast.show { transform: translateY(0); }
+  .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+
+  /* ── ANIMATIONS ── */
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb { display: flex; gap: 0.5rem; align-items: center; font-size: 0.72rem; color: var(--light); padding: 1rem 4rem; }
+  @media (max-width: 768px) { .breadcrumb { padding: 1rem 1.2rem; } }
+  .breadcrumb a { color: var(--light); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--gold); }
+  .breadcrumb span { color: var(--charcoal); }
+
+  /* ── ALSO LIKE ── */
+  .also-like { padding: 3rem 4rem; background: var(--off-white); }
+  @media (max-width: 768px) { .also-like { padding: 2rem 1.2rem; } }
+  .also-like-scroll { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  @media (max-width: 900px) { .also-like-scroll { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ── MOBILE FILTER BUTTON ── */
+  .mobile-filter-btn { display: none; }
+  @media (max-width: 900px) { .mobile-filter-btn { display: flex; } }
+
+  /* ── OVERLAY ── */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 998; display: none; }
+  .overlay.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span id="toast-msg">Added to cart</span>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo" onclick="showPage('home')">
+    ChhumChhum
+    <span>Fashion Label</span>
+  </div>
+  <div class="nav-links" id="nav-links">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('collections')">Collections</a>
+    <a href="#" onclick="showPage('home')">New Arrivals</a>
+    <a href="#" onclick="showPage('home')">Celebrity</a>
+    <a href="#" onclick="showPage('home')">About</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-icon">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </div>
+    <div class="nav-icon" onclick="showPage('cart')" style="position:relative">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <div class="cart-badge" id="cart-badge">1</div>
+    </div>
+    <div class="nav-icon" id="hamburger-btn" onclick="toggleMobile()" style="display:none">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#" onclick="showPage('home');closeAll()">Home</a>
+  <a href="#" onclick="showPage('collections');closeAll()">Collections</a>
+  <a href="#" onclick="closeAll()">New Arrivals</a>
+  <a href="#" onclick="closeAll()">Celebrity Closet</a>
+  <a href="#" onclick="closeAll()">About Us</a>
+  <a href="#" onclick="showPage('cart');closeAll()">Cart</a>
+</div>
+
+<!-- ═══════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-slide hero-slide-1 active" id="slide-0">
+      <div class="hero-bg"></div>
+      <div style="position:absolute;right:10%;bottom:0;width:35%;max-width:400px;height:85%;display:flex;align-items:flex-end;justify-content:center;opacity:0.5">
+        <svg viewBox="0 0 200 500" fill="none" style="height:100%;width:auto">
+          <ellipse cx="100" cy="80" rx="35" ry="40" fill="#c97b7b" opacity="0.3"/>
+          <path d="M65 120 Q40 200 50 350 Q60 450 100 490 Q140 450 150 350 Q160 200 135 120 Q120 100 100 100 Q80 100 65 120Z" fill="#f2c9c9" opacity="0.4"/>
+          <path d="M75 130 Q55 180 48 260 Q60 220 100 210 Q140 220 152 260 Q145 180 125 130Z" fill="#e8a0a0" opacity="0.3"/>
+        </svg>
+      </div>
+    </div>
+    <div class="hero-slide hero-slide-2" id="slide-1">
+      <div class="hero-bg"></div>
+    </div>
+    <div class="hero-slide hero-slide-3" id="slide-2">
+      <div class="hero-bg"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-tag">New Collection · Spring 2025</div>
+      <h1 class="hero-title">Draped in<br><em>Elegance</em></h1>
+      <p class="hero-subtitle">Hand-painted organza and silk sarees, made with love for the modern Indian woman.</p>
+      <button class="btn" onclick="showPage('collections')">Explore Collection
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <div class="hero-dots">
+      <div class="hero-dot active" onclick="goToSlide(0)"></div>
+      <div class="hero-dot" onclick="goToSlide(1)"></div>
+      <div class="hero-dot" onclick="goToSlide(2)"></div>
+    </div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Hand Painted Sarees</span><span>·</span>
+      <span>Luxury Organza</span><span>·</span>
+      <span>Made to Order</span><span>·</span>
+      <span>Celebrity Approved</span><span>·</span>
+      <span>Bridal Couture</span><span>·</span>
+      <span>Haldi Collection</span><span>·</span>
+      <span>Hand Painted Sarees</span><span>·</span>
+      <span>Luxury Organza</span><span>·</span>
+      <span>Made to Order</span><span>·</span>
+      <span>Celebrity Approved</span><span>·</span>
+      <span>Bridal Couture</span><span>·</span>
+      <span>Haldi Collection</span><span>·</span>
+    </div>
+  </div>
+
+  <!-- FEATURED COLLECTIONS -->
+  <section>
+    <div class="section-header-row">
+      <div>
+        <div class="section-label">Explore</div>
+        <h2 class="section-title">Featured <em>Collections</em></h2>
+      </div>
+      <button class="btn" onclick="showPage('collections')">View All</button>
+    </div>
+    <div class="collections-scroll">
+      <div class="collection-card fade-up" onclick="showPage('collections')">
+        <div class="collection-card-bg saree-a"></div>
+        <div class="collection-card-overlay">
+          <div class="collection-card-name">Organza</div>
+          <div class="collection-card-count">32 pieces</div>
+        </div>
+      </div>
+      <div class="collection-card fade-up" onclick="showPage('collections')">
+        <div class="collection-card-bg saree-b"></div>
+        <div class="collection-card-overlay">
+          <div class="collection-card-name">Haldi Series</div>
+          <div class="collection-card-count">18 pieces</div>
+        </div>
+      </div>
+      <div class="collection-card fade-up" onclick="showPage('collections')">
+        <div class="collection-card-bg saree-g"></div>
+        <div class="collection-card-overlay">
+          <div class="collection-card-name">Bridal Edit</div>
+          <div class="collection-card-count">24 pieces</div>
+        </div>
+      </div>
+      <div class="collection-card fade-up" onclick="showPage('collections')">
+        <div class="collection-card-bg saree-d"></div>
+        <div class="collection-card-overlay">
+          <div class="collection-card-name">Chinon Silk</div>
+          <div class="collection-card-count">41 pieces</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEST SELLERS -->
+  <section style="background:var(--off-white)">
+    <div class="section-header-row">
+      <div>
+        <div class="section-label">Most Loved</div>
+        <h2 class="section-title">Best <em>Sellers</em></h2>
+      </div>
+    </div>
+    <div class="product-grid product-grid-4">
+      <div class="product-card fade-up" onclick="showPage('product')">
+        <div class="product-card-img">
+          <div class="img-placeholder img-1 saree-a">
+            <svg class="saree-icon" viewBox="0 0 60 120" fill="none"><path d="M20 10 Q15 30 18 60 Q16 90 20 110 Q30 115 40 110 Q44 90 42 60 Q45 30 40 10 Q35 5 30 5 Q25 5 20 10Z" fill="rgba(201,123,123,0.3)" stroke="rgba(201,123,123,0.5)" stroke-width="0.5"/></svg>
+          </div>
+          <div class="img-placeholder img-2 saree-f"><div style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:rgba(155,79,79,0.5)">Alt View</div></div>
+          <div class="product-card-tag">Best Seller</div>
+          <div class="product-card-wishlist">
+            <svg width="14" height="14" fill="none" stroke="#c97b7b" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-sub">Picchika</div>
+          <div class="product-card-name">Rose-Pink Organza</div>
+          <div class="product-card-price">₹25,500</div>
+        </div>
+      </div>
+      <div class="product-card fade-up" onclick="showPage('product')">
+        <div class="product-card-img">
+          <div class="img-placeholder img-1 saree-b"></div>
+          <div class="img-placeholder img-2 saree-e"></div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-sub">ChhumChhum</div>
+          <div class="product-card-name">Ahi — Pastel Dreams</div>
+          <div class="product-card-price">₹25,500</div>
+        </div>
+      </div>
+      <div class="product-card fade-up" onclick="showPage('product')">
+        <div class="product-card-img">
+          <div class="img-placeholder img-1 saree-c"></div>
+          <div class="img-placeholder img-2 saree-g"></div>
+          <div class="product-card-tag">New</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-sub">Alia Bhatt</div>
+          <div class="product-card-name">Fuschia on Red</div>
+          <div class="product-card-price">₹25,500</div>
+        </div>
+      </div>
+      <div class="product-card fade-up" onclick="showPage('product')">
+        <div class="product-card-img">
+          <div class="img-placeholder img-1 saree-d"></div>
+          <div class="img-placeholder img-2 saree-h"></div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-sub">ChhumChhum</div>
+          <div class="product-card-name">Lilac Reverie</div>
+          <div class="product-card-price">₹27,500</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORE SECTION -->
+  <section class="store-section" style="padding:0">
+    <div class="store-bg-pattern"></div>
+    <div class="store-content">
+      <div class="store-label">Visit Us</div>
+      <h2 class="store-title">Our Studio &<br>Flagship Store</h2>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-top:0.5rem;font-style:italic;font-family:'Cormorant Garamond',serif">Where every drape tells a story</p>
+      <div class="store-card">
+        <div class="store-address">Delhi — 930, Gali Pattal Wali, Maliwara, Chandni Chowk, 110006</div>
+        <button class="btn btn-gold" onclick="window.open('https://claude.ai/share/7fd41335-42a2-44b4-906d-7ba8d872cab5','_blank')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          View Direction
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-title">ChhumChhum</div>
+        <div class="footer-brand-sub">Fashion Label</div>
+        <p class="footer-brand-desc">Luxury hand-painted sarees crafted for the modern Indian woman. Every piece is a work of art.</p>
+        <div style="margin-top:1.5rem">
+          <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Newsletter</div>
+          <div class="subscribe-row">
+            <input class="subscribe-input" type="email" placeholder="Your email address">
+            <button class="subscribe-btn">→</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Quick Links</div>
+        <a class="footer-link" href="#" onclick="showPage('home')">Home</a>
+        <a class="footer-link" href="#" onclick="showPage('collections')">Collections</a>
+        <a class="footer-link" href="#">New Arrivals</a>
+        <a class="footer-link" href="#">Celebrity Closet</a>
+        <a class="footer-link" href="#">About Us</a>
+        <a class="footer-link" href="#">Blog</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Info</div>
+        <a class="footer-link" href="#">Privacy Policy</a>
+        <a class="footer-link" href="#">Terms & Conditions</a>
+        <a class="footer-link" href="#">Contact Us</a>
+        <a class="footer-link" href="#">Shipping & Returns</a>
+        <a class="footer-link" href="#">Custom Fit</a>
+        <a class="footer-link" href="#">Refer & Earn</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label">Address</span>
+          930, Gali Pattal Wali, Maliwara<br>Chandni Chowk, Delhi 110006
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label">Email</span>
+          chhumchhum2202@gmail.com
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-label">WhatsApp / Call</span>
+          +91 98118 80889
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025, ChhumChhum Fashion Label. All rights reserved.</div>
+      <div class="footer-social">
+        <div class="footer-social-icon" title="Instagram">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </div>
+        <div class="footer-social-icon" title="Pinterest">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     COLLECTIONS PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-collections">
+  <div class="page-banner">
+    <div class="page-banner-label">ChhumChhum</div>
+    <h1 class="page-banner-title">Sarees</h1>
+    <div class="page-banner-count">153 products</div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem 4rem;border-bottom:1px solid var(--border)">
+    <button class="btn mobile-filter-btn" style="font-size:0.7rem">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="6" x2="16" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="16" y2="18"/></svg>
+      Filter
+    </button>
+    <div style="font-size:0.75rem;color:var(--mid);display:flex;gap:1rem;align-items:center">
+      <span>Sort by:</span>
+      <select class="form-select" style="width:auto;padding:0.4rem 0.8rem;font-size:0.75rem">
+        <option>Best selling</option>
+        <option>Price: Low to High</option>
+        <option>Price: High to Low</option>
+        <option>Newest</option>
+      </select>
+    </div>
+  </div>
+
+  <section style="padding:2rem 4rem">
+    <div class="collection-page-layout">
+      <!-- SIDEBAR -->
+      <div class="collection-sidebar">
+        <div class="filter-group">
+          <div class="filter-title">Availability</div>
+          <div class="filter-options">
+            <label class="filter-option"><input type="checkbox" checked> Ready to Ship (42)</label>
+            <label class="filter-option"><input type="checkbox"> Made to Order (111)</label>
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-title">Fabric</div>
+          <div class="filter-options">
+            <label class="filter-option"><input type="checkbox" checked> Organza (45)</label>
+            <label class="filter-option"><input type="checkbox"> Diamond Chiffon (38)</label>
+            <label class="filter-option"><input type="checkbox"> Chinon (29)</label>
+            <label class="filter-option"><input type="checkbox"> Pure Silk (28)</label>
+            <label class="filter-option"><input type="checkbox"> Linen (13)</label>
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-title">Occasion</div>
+          <div class="filter-options">
+            <label class="filter-option"><input type="checkbox"> Wedding (52)</label>
+            <label class="filter-option"><input type="checkbox"> Haldi (18)</label>
+            <label class="filter-option"><input type="checkbox"> Party Wear (44)</label>
+            <label class="filter-option"><input type="checkbox"> Festive (39)</label>
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-title">Color</div>
+          <div class="filter-colors">
+            <div class="color-dot active" style="background:#f2c9c9" title="Blush"></div>
+            <div class="color-dot" style="background:#c9e8df" title="Sage"></div>
+            <div class="color-dot" style="background:#e8d4b4" title="Champagne"></div>
+            <div class="color-dot" style="background:#d4c9e8" title="Lavender"></div>
+            <div class="color-dot" style="background:#c97b7b" title="Rose"></div>
+            <div class="color-dot" style="background:#1e4a3c" title="Forest"></div>
+            <div class="color-dot" style="background:#c9a96e" title="Gold"></div>
+            <div class="color-dot" style="background:#2a2a2a" title="Onyx"></div>
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-title">Price Range</div>
+          <div class="price-range">
+            <input type="range" min="15000" max="80000" value="50000" oninput="document.getElementById('price-val').textContent='₹'+parseInt(this.value).toLocaleString('en-IN')">
+            <div class="price-labels">
+              <span>₹15,000</span>
+              <span id="price-val">₹50,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div style="flex:1">
+        <div class="product-grid product-grid-3">
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-a"></div><div class="img-placeholder img-2 saree-f"></div><div class="product-card-tag">Best Seller</div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">Rose-Pink Organza Saree</div><div class="product-card-price">From ₹25,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-b"></div><div class="img-placeholder img-2 saree-e"></div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">Ahi</div><div class="product-card-price">From ₹25,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-c"></div><div class="img-placeholder img-2 saree-g"></div><div class="product-card-tag">New</div></div>
+            <div class="product-card-info"><div class="product-card-sub">Celebrity</div><div class="product-card-name">Fuschia on Red Organza</div><div class="product-card-price">From ₹25,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-d"></div><div class="img-placeholder img-2 saree-h"></div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">The Dreamy Pastel</div><div class="product-card-price">From ₹33,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-e"></div><div class="img-placeholder img-2 saree-a"></div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">Rose Pink Painted Border</div><div class="product-card-price">From ₹27,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-g"></div><div class="img-placeholder img-2 saree-c"></div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">Lilies on Rosepink</div><div class="product-card-price">From ₹25,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-h"></div><div class="img-placeholder img-2 saree-b"></div><div class="product-card-tag">Custom</div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">Custom Name Organza</div><div class="product-card-price">From ₹31,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-f"></div><div class="img-placeholder img-2 saree-d"></div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">Mauve Whisper Chinon</div><div class="product-card-price">From ₹29,500</div></div>
+          </div>
+          <div class="product-card fade-up" onclick="showPage('product')">
+            <div class="product-card-img"><div class="img-placeholder img-1 saree-b"></div><div class="img-placeholder img-2 saree-f"></div></div>
+            <div class="product-card-info"><div class="product-card-sub">ChhumChhum</div><div class="product-card-name">Ivory Gota Silk</div><div class="product-card-price">From ₹34,000</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-title">ChhumChhum</div>
+        <div class="footer-brand-sub">Fashion Label</div>
+        <p class="footer-brand-desc">Luxury hand-painted sarees crafted for the modern Indian woman.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Info</div>
+        <a class="footer-link" href="#">Shipping & Returns</a>
+        <a class="footer-link" href="#">Terms & Conditions</a>
+        <a class="footer-link" href="#">Privacy Policy</a>
+        <a class="footer-link" href="#">Contact Us</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Quick Links</div>
+        <a class="footer-link" href="#" onclick="showPage('home')">Home</a>
+        <a class="footer-link" href="#" onclick="showPage('collections')">Collections</a>
+        <a class="footer-link" href="#">New Arrivals</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Subscribe</div>
+        <div class="subscribe-row" style="margin-top:0">
+          <input class="subscribe-input" type="email" placeholder="Email address">
+          <button class="subscribe-btn">→</button>
+        </div>
+        <div style="margin-top:1.5rem;display:flex;gap:0.75rem">
+          <div class="footer-social-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025, ChhumChhum Fashion Label</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     PRODUCT PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-product">
+  <div class="breadcrumb">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <a href="#" onclick="showPage('collections')">Sarees</a>
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <span>Rose-Pink Organza Saree</span>
+  </div>
+
+  <div class="product-layout">
+    <!-- GALLERY -->
+    <div class="product-gallery">
+      <div class="gallery-thumbs">
+        <div class="gallery-thumb active" onclick="selectThumb(0)">
+          <div class="gallery-thumb-inner saree-a" style="border-radius:2px"></div>
+        </div>
+        <div class="gallery-thumb" onclick="selectThumb(1)">
+          <div class="gallery-thumb-inner saree-f" style="border-radius:2px"></div>
+        </div>
+        <div class="gallery-thumb" onclick="selectThumb(2)">
+          <div class="gallery-thumb-inner saree-a" style="filter:brightness(0.9);border-radius:2px"></div>
+        </div>
+        <div class="gallery-thumb" onclick="selectThumb(3)">
+          <div class="gallery-thumb-inner saree-f" style="filter:brightness(1.05);border-radius:2px"></div>
+        </div>
+      </div>
+      <div class="gallery-main" id="gallery-main">
+        <div class="gallery-main-inner saree-a" id="gallery-main-inner" style="display:flex;align-items:center;justify-content:center;border-radius:2px">
+          <svg viewBox="0 0 80 180" fill="none" width="120" style="opacity:0.2">
+            <ellipse cx="40" cy="25" rx="18" ry="22" fill="#c97b7b"/>
+            <path d="M22 47 Q15 80 18 120 Q16 155 22 175 Q31 180 40 175 Q49 180 58 175 Q64 155 62 120 Q65 80 58 47 Q52 40 40 38 Q28 40 22 47Z" fill="#e8a0a0"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="product-info">
+      <div class="product-brand">ChhumChhum</div>
+      <h1 class="product-title">Rose-Pink<br>Organza Saree</h1>
+      <div class="divider"></div>
+      <div class="product-price"><span class="currency">₹ </span>25,500<span style="font-size:0.75rem;color:var(--mid);margin-left:0.5rem">Taxes included</span></div>
+
+      <div class="size-label">Underskirt / Petticoat</div>
+      <div class="size-options">
+        <button class="size-btn active" onclick="selectSize(this)">None</button>
+        <button class="size-btn" onclick="selectSize(this)">XXS</button>
+        <button class="size-btn" onclick="selectSize(this)">XS</button>
+        <button class="size-btn" onclick="selectSize(this)">S</button>
+        <button class="size-btn" onclick="selectSize(this)">M</button>
+        <button class="size-btn" onclick="selectSize(this)">L</button>
+        <button class="size-btn" onclick="selectSize(this)">XL</button>
+        <button class="size-btn" onclick="selectSize(this)">XXL</button>
+      </div>
+
+      <div class="qty-row">
+        <div class="size-label" style="margin:0">Quantity</div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-val" id="qty-val">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+
+      <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
+      <button class="btn" style="width:100%;justify-content:center" onclick="showPage('checkout')">Buy it now</button>
+
+      <div class="product-details">
+        <div class="detail-row" onclick="toggleDetail('desc')">
+          <span class="detail-row-title">Description</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="detail-content open" id="detail-desc">
+          Hand painted Rose-Pink organza saree with hand painted red roses. Enhanced with hand embroidered gota. Comes with an unstitched silk piece in the shade of saree.
+        </div>
+
+        <div class="detail-row" onclick="toggleDetail('dim')">
+          <span class="detail-row-title">Dimensions</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="detail-content" id="detail-dim">
+          Length of saree: 5.5 meters<br>
+          Width of saree: 41" / 42" inches<br>
+          Length of blouse piece: 1 meter
+        </div>
+
+        <div class="detail-row" onclick="toggleDetail('care')">
+          <span class="detail-row-title">Care Instructions</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="detail-content" id="detail-care">
+          Dry clean only. Store in a muslin bag. Avoid direct sunlight for extended periods.
+        </div>
+
+        <div class="detail-row" onclick="toggleDetail('custom')">
+          <span class="detail-row-title">Customisations</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="detail-content" id="detail-custom">
+          For customisations WhatsApp: +91 98118 80889
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YOU MAY ALSO LIKE -->
+  <div class="also-like">
+    <div class="section-label">You May Also Like</div>
+    <h2 class="section-title" style="margin-bottom:2rem">Related <em>Pieces</em></h2>
+    <div class="also-like-scroll">
+      <div class="product-card" onclick="showPage('product')">
+        <div class="product-card-img"><div class="img-placeholder img-1 saree-d"></div><div class="img-placeholder img-2 saree-h"></div></div>
+        <div class="product-card-info"><div class="product-card-name">The Dreamy Pastel</div><div class="product-card-price">From ₹33,500</div></div>
+      </div>
+      <div class="product-card" onclick="showPage('product')">
+        <div class="product-card-img"><div class="img-placeholder img-1 saree-f"></div><div class="img-placeholder img-2 saree-a"></div></div>
+        <div class="product-card-info"><div class="product-card-name">Rose Pink Painted Border</div><div class="product-card-price">From ₹27,500</div></div>
+      </div>
+      <div class="product-card" onclick="showPage('product')">
+        <div class="product-card-img"><div class="img-placeholder img-1 saree-g"></div><div class="img-placeholder img-2 saree-e"></div></div>
+        <div class="product-card-info"><div class="product-card-name">Lilies on Rosepink</div><div class="product-card-price">From ₹25,500</div></div>
+      </div>
+      <div class="product-card" onclick="showPage('product')">
+        <div class="product-card-img"><div class="img-placeholder img-1 saree-h"></div><div class="img-placeholder img-2 saree-c"></div></div>
+        <div class="product-card-info"><div class="product-card-name">Custom Name Organza</div><div class="product-card-price">From ₹31,500</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand-title">ChhumChhum</div><div class="footer-brand-sub">Fashion Label</div></div>
+      <div><div class="footer-col-title">Info</div><a class="footer-link" href="#">Shipping & Returns</a><a class="footer-link" href="#">Privacy Policy</a><a class="footer-link" href="#">Contact Us</a></div>
+      <div><div class="footer-col-title">Quick Links</div><a class="footer-link" href="#" onclick="showPage('home')">Home</a><a class="footer-link" href="#" onclick="showPage('collections')">Collections</a></div>
+      <div><div class="footer-col-title">Subscribe</div><div class="subscribe-row" style="margin-top:0"><input class="subscribe-input" type="email" placeholder="Email"><button class="subscribe-btn">→</button></div></div>
+    </div>
+    <div class="footer-bottom"><div class="footer-copy">© 2025, ChhumChhum Fashion Label</div></div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     CART PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="cart-layout">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2.5rem">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400">Your Cart</h1>
+      <a href="#" onclick="showPage('collections')" style="font-size:0.75rem;color:var(--mid);text-decoration:underline;letter-spacing:0.05em">Continue shopping</a>
+    </div>
+
+    <table class="cart-table">
+      <thead><tr>
+        <th>Product</th>
+        <th style="text-align:center">Quantity</th>
+        <th>Total</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="cart-item-td">
+            <div class="cart-item-row">
+              <div class="cart-item-img"><div class="cart-item-img-inner saree-b"></div></div>
+              <div>
+                <div class="cart-item-name">Ahi</div>
+                <div class="cart-item-meta">₹25,500.00</div>
+                <div class="cart-item-meta">Underskirt/Petticoat: None</div>
+                <div class="cart-item-remove" onclick="removeItem()">Remove</div>
+              </div>
+            </div>
+          </td>
+          <td class="cart-item-td" style="text-align:center;vertical-align:middle">
+            <div class="qty-control" style="display:inline-flex">
+              <button class="qty-btn" onclick="changeQty(-1,'cart')">−</button>
+              <div class="qty-val" id="cart-qty">1</div>
+              <button class="qty-btn" onclick="changeQty(1,'cart')">+</button>
+            </div>
+          </td>
+          <td class="cart-item-td" style="text-align:right;vertical-align:middle;font-size:0.95rem" id="cart-total-cell">₹25,500.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cart-bottom">
+      <div>
+        <div style="font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--charcoal);margin-bottom:0.75rem">Order special instructions</div>
+        <div class="cart-notes">
+          <textarea placeholder="Add a note to your order..."></textarea>
+        </div>
+      </div>
+      <div class="cart-summary-box">
+        <label class="terms-check">
+          <input type="checkbox" id="terms-check">
+          I agree to the <a href="#" style="color:var(--charcoal);font-weight:500;margin-left:0.2rem">terms and conditions</a>
+        </label>
+        <div class="cart-total-row">
+          <span>Subtotal</span><span>₹25,500.00</span>
+        </div>
+        <div class="cart-total-row" style="font-size:0.72rem;color:var(--light);margin-bottom:1rem">
+          <span>Taxes included. Shipping calculated at checkout.</span>
+        </div>
+        <div class="cart-total-row final">
+          <span>Estimated Total</span><span>₹25,500.00</span>
+        </div>
+        <button class="add-to-cart" style="margin-top:1rem" onclick="goCheckout()">Check out</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand-title">ChhumChhum</div><div class="footer-brand-sub">Fashion Label</div></div>
+      <div><div class="footer-col-title">Info</div><a class="footer-link" href="#">Shipping & Returns</a><a class="footer-link" href="#">Privacy Policy</a><a class="footer-link" href="#">Contact Us</a></div>
+      <div><div class="footer-col-title">Quick Links</div><a class="footer-link" href="#" onclick="showPage('home')">Home</a><a class="footer-link" href="#" onclick="showPage('collections')">Collections</a></div>
+      <div><div class="footer-col-title">Subscribe</div><div class="subscribe-row" style="margin-top:0"><input class="subscribe-input" type="email" placeholder="Email"><button class="subscribe-btn">→</button></div></div>
+    </div>
+    <div class="footer-bottom"><div class="footer-copy">© 2025, ChhumChhum Fashion Label</div></div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════
+     CHECKOUT PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-checkout">
+  <div class="checkout-layout">
+    <!-- LEFT -->
+    <div class="checkout-left">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;margin-bottom:2rem;color:var(--charcoal)">ChhumChhum</div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Contact</div>
+        <div class="form-row single" style="margin-bottom:0.5rem">
+          <input class="form-input" type="email" placeholder="Email">
+        </div>
+        <label class="form-check">
+          <input type="checkbox" checked> Email me with news and offers
+        </label>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Delivery</div>
+        <div class="form-row single">
+          <select class="form-select">
+            <option>India</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>UAE</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input class="form-input" type="text" placeholder="First name">
+          <input class="form-input" type="text" placeholder="Last name">
+        </div>
+        <div class="form-row single">
+          <input class="form-input" type="text" placeholder="Address">
+        </div>
+        <div class="form-row single">
+          <input class="form-input" type="text" placeholder="Apartment, suite, etc.">
+        </div>
+        <div class="form-row triple">
+          <input class="form-input" type="text" placeholder="City">
+          <select class="form-select"><option>Karnataka</option><option>Maharashtra</option><option>West Bengal</option><option>Delhi</option><option>Tamil Nadu</option></select>
+          <input class="form-input" type="text" placeholder="PIN code">
+        </div>
+        <div class="form-row single">
+          <input class="form-input" type="tel" placeholder="Phone">
+        </div>
+        <label class="form-check">
+          <input type="checkbox"> Save this information for next time
+        </label>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Shipping Method</div>
+        <div style="background:var(--off-white);padding:1rem 1.2rem;border-radius:var(--r);font-size:0.82rem;color:var(--mid)">
+          Enter your shipping address to view available shipping methods.
+        </div>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Payment</div>
+        <p style="font-size:0.75rem;color:var(--mid);margin-bottom:1rem">All transactions are secure and encrypted.</p>
+        <div class="payment-option active">
+          <div class="payment-radio"></div>
+          <div style="flex:1">
+            <div style="font-size:0.85rem;color:var(--charcoal)">Razorpay Secure</div>
+          </div>
+          <div class="payment-pills">
+            <div class="payment-pill">UPI</div>
+            <div class="payment-pill">Cards</div>
+            <div class="payment-pill">Int'l</div>
+            <div class="payment-pill">Wallets</div>
+            <div class="payment-pill" style="background:var(--charcoal);color:white;border-color:var(--charcoal)">+17</div>
+          </div>
+        </div>
+        <div class="payment-desc">You'll be redirected to Razorpay Secure (UPI, Cards, Int'l Cards, Wallets) to complete your purchase.</div>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Billing Address</div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem">
+          <label style="display:flex;align-items:center;gap:0.75rem;padding:1rem 1.2rem;border:1.5px solid var(--gold);border-radius:var(--r);cursor:pointer;font-size:0.85rem">
+            <input type="radio" name="billing" checked style="accent-color:var(--gold)"> Same as shipping address
+          </label>
+          <label style="display:flex;align-items:center;gap:0.75rem;padding:1rem 1.2rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:0.85rem">
+            <input type="radio" name="billing" style="accent-color:var(--gold)"> Use a different billing address
+          </label>
+        </div>
+      </div>
+
+      <button class="add-to-cart" style="font-size:0.82rem;letter-spacing:0.18em" onclick="showToast('Order placed successfully! 🎉')">Pay Now</button>
+
+      <div style="display:flex;gap:1.5rem;margin-top:1.5rem;font-size:0.72rem;color:var(--light)">
+        <a href="#" style="color:var(--light)">Refund policy</a>
+        <a href="#" style="color:var(--light)">Privacy policy</a>
+        <a href="#" style="color:var(--light)">Terms of service</a>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="checkout-right">
+      <div class="checkout-item">
+        <div class="checkout-item-img">
+          <div class="checkout-item-img-inner saree-b"></div>
+          <div class="checkout-item-badge">1</div>
+        </div>
+        <div class="checkout-item-info">
+          <div class="checkout-item-name">Ahi</div>
+          <div class="checkout-item-meta">None</div>
+        </div>
+        <div class="checkout-item-price">₹25,500.00</div>
+      </div>
+
+      <div class="discount-row">
+        <input class="discount-input" type="text" placeholder="Discount code or gift card">
+        <button class="discount-btn">Apply</button>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin-bottom:1rem"></div>
+      <div class="summary-line"><span>Subtotal</span><span>₹25,500.00</span></div>
+      <div class="summary-line"><span>Shipping</span><span style="color:var(--light)">Enter shipping address</span></div>
+      <div class="summary-line total">
+        <span>Total</span>
+        <div style="text-align:right">
+          <div>INR ₹25,500.00</div>
+          <div class="summary-tax">Including ₹1,214.29 in taxes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentSlide = 0;
+  let cartQty = 1;
+  let productQty = 1;
+
+  // ── PAGE NAV ──
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    initFadeUp();
+  }
+
+  // ── NAVBAR SCROLL ──
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  // ── RESPONSIVE NAV ──
+  function checkNav() {
+    const w = window.innerWidth;
+    const links = document.getElementById('nav-links');
+    const ham = document.getElementById('hamburger-btn');
+    if (w <= 768) {
+      links.style.display = 'none';
+      ham.style.display = 'flex';
+      document.getElementById('mobile-menu').style.display = 'flex';
+    } else {
+      links.style.display = 'flex';
+      ham.style.display = 'none';
+      document.getElementById('mobile-menu').classList.remove('open');
+    }
+  }
+  window.addEventListener('resize', checkNav);
+  checkNav();
+
+  function toggleMobile() {
+    const m = document.getElementById('mobile-menu');
+    const o = document.getElementById('overlay');
+    const open = m.classList.toggle('open');
+    o.classList.toggle('show', open);
+  }
+  function closeAll() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // ── HERO CAROUSEL ──
+  function goToSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    document.querySelectorAll('.hero-dot')[currentSlide].classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + currentSlide).classList.add('active');
+    document.querySelectorAll('.hero-dot')[currentSlide].classList.add('active');
+  }
+  setInterval(() => goToSlide((currentSlide + 1) % 3), 4000);
+
+  // ── GALLERY ──
+  const thumbColors = [['saree-a',''], ['saree-f',''], ['saree-a','filter:brightness(0.9)'], ['saree-f','filter:brightness(1.05)']];
+  function selectThumb(i) {
+    document.querySelectorAll('.gallery-thumb').forEach((t, idx) => t.classList.toggle('active', idx === i));
+    const inner = document.getElementById('gallery-main-inner');
+    inner.className = 'gallery-main-inner ' + thumbColors[i][0];
+    inner.style.cssText = 'display:flex;align-items:center;justify-content:center;border-radius:2px;' + thumbColors[i][1];
+  }
+
+  // ── SIZE SELECT ──
+  function selectSize(btn) {
+    btn.closest('.size-options').querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // ── QTY ──
+  function changeQty(delta, ctx) {
+    if (ctx === 'cart') {
+      cartQty = Math.max(1, cartQty + delta);
+      document.getElementById('cart-qty').textContent = cartQty;
+      document.getElementById('cart-total-cell').textContent = '₹' + (25500 * cartQty).toLocaleString('en-IN') + '.00';
+    } else {
+      productQty = Math.max(1, productQty + delta);
+      document.getElementById('qty-val').textContent = productQty;
+    }
+  }
+
+  // ── ADD TO CART ──
+  function addToCart() {
+    showToast('Added to cart');
+    document.getElementById('cart-badge').textContent = productQty;
+  }
+  function removeItem() {
+    showToast('Item removed');
+    document.querySelector('.cart-table tbody').innerHTML = '<tr><td colspan="3" style="padding:3rem 0;text-align:center;color:var(--light);font-size:0.85rem">Your cart is empty</td></tr>';
+    document.getElementById('cart-badge').textContent = '0';
+  }
+
+  // ── CHECKOUT GUARD ──
+  function goCheckout() {
+    if (!document.getElementById('terms-check').checked) {
+      showToast('Please agree to terms & conditions');
+      return;
+    }
+    showPage('checkout');
+  }
+
+  // ── DETAIL TOGGLE ──
+  function toggleDetail(id) {
+    document.getElementById('detail-' + id).classList.toggle('open');
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── FADE UP OBSERVER ──
+  function initFadeUp() {
+    const els = document.querySelectorAll('.page.active .fade-up');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    els.forEach(el => obs.observe(el));
+  }
+  setTimeout(initFadeUp, 100);
+
+  // ── COLOR DOT TOGGLE ──
+  document.querySelectorAll('.color-dot').forEach(d => {
+    d.addEventListener('click', () => {
+      d.closest('.filter-colors').querySelectorAll('.color-dot').forEach(x => x.classList.remove('active'));
+      d.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
