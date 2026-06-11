@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useProduct } from '../hooks/useInsforge';
 import { formatPrice, getRelatedProducts } from '../data/products';
+import { vercelImageUrl } from '../lib/vercelImage';
 
 const thumbVariants = [
   { filter: '' },
@@ -103,7 +104,7 @@ export default function ProductPage() {
             {thumbImages.map((img, i) => (
               <div key={i} className={`gallery-thumb ${activeThumb === i ? 'active' : ''}`} onClick={() => setActiveThumb(i)}>
                 {img ? (
-                  <img src={img} alt={`View ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '2px' }} />
+                  <img src={vercelImageUrl(img, { w: 300 })} alt={`View ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '2px' }} />
                 ) : (
                   <div className={`gallery-thumb-inner ${i % 2 === 0 ? (product.colorClass1||'saree-a') : (product.colorClass2||'saree-f')}`} style={{ borderRadius: '2px' }} />
                 )}
@@ -112,7 +113,7 @@ export default function ProductPage() {
           </div>
           <div className="gallery-main">
             {images[activeThumb] ? (
-              <img className="gallery-main-inner" src={images[activeThumb] || images[0]} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '2px' }} />
+              <img className="gallery-main-inner" src={vercelImageUrl(images[activeThumb] || images[0], { w: 900 })} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '2px' }} />
             ) : (
               <div className={`gallery-main-inner ${product.colorClass1||'saree-a'}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '2px' }}>
                 <svg viewBox="0 0 80 180" fill="none" width="120" style={{ opacity: 0.2 }}><ellipse cx="40" cy="25" rx="18" ry="22" fill="#c97b7b" /><path d="M22 47 Q15 80 18 120 Q16 155 22 175 Q31 180 40 175 Q49 180 58 175 Q64 155 62 120 Q65 80 58 47 Q52 40 40 38 Q28 40 22 47Z" fill="#e8a0a0" /></svg>

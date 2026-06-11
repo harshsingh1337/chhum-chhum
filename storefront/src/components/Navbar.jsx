@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { products } from '../data/products';
+import { vercelImageUrl } from '../lib/vercelImage';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -80,7 +81,7 @@ export default function Navbar() {
         <div className="nav-top-row">
           <div className="nav-top-left">
             <Link to="/" className="nav-brand-left">
-              <img src="/images/logo.jpeg" alt="ChhumChhum" className="nav-logo-img" />
+              <img src={vercelImageUrl('/images/logo.jpeg', { w: 160 })} alt="ChhumChhum" className="nav-logo-img" />
               <span className="nav-brand-text">ChhumChhum</span>
             </Link>
             <div
@@ -152,7 +153,7 @@ export default function Navbar() {
                 searchResults.map((p) => (
                   <div key={p.id} className="search-result-item" onClick={() => handleSearchSelect(p)}>
                     <div className="search-result-img">
-                      {p.images?.[0] ? <img src={p.images[0]} alt={p.name} /> : <div className="search-result-placeholder" />}
+                      {p.images?.[0] ? <img src={vercelImageUrl(p.images[0], { w: 80 })} alt={p.name} /> : <div className="search-result-placeholder" />}
                     </div>
                     <div className="search-result-info">
                       <div className="search-result-name">{p.name}</div>
