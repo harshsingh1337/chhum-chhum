@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
@@ -27,6 +28,7 @@ export default function App() {
               <Route path="/about" element={<AboutPage />} />
             </Routes>
           </div>
+          <SpeedInsights />
         </ToastProvider>
       </CartProvider>
     </BrowserRouter>
